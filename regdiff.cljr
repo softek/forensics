@@ -3,6 +3,7 @@
             RegistryKey
             Registry
             RegistryHive
+            RegistryValueKind
             RegistryView])
   (:require [clojure.string :as string])
   (:gen-class))
@@ -64,6 +65,13 @@
           (System.Console/set_Title (str v " comparisons. " path)))
         (aset value 0 (+ 1 v))))))
 
+(defn values-equal? [{lv :value :as l} {rv :value :as r}]
+  (or (= l r)
+      (and (array? lv)
+           (array? rv)
+           (= (clojure.string/join "\n" lv)
+              (clojure.string/join "\n" rv)))))
+
 (defn reg-compare [s1 s2 filter? progress-reporter]
   (lazy-seq
     (let [[f1 & r1] s1
@@ -72,7 +80,11 @@
             k2 (reg-key f2)
             key-comparison (compare k1 k2)
             [n1 n2 c]
-            (cond (= key-comparison 0) [r1 r2 [k1 (if (= f1 f2) :same :different) f1 f2]]
+            (cond (= key-comparison 0) [r1 r2 [k1 (if (or (and (reg-key? f1) (reg-key? f2))
+                                                          (values-equal? f1 f2))
+                                                    :same
+                                                    :different)
+                                               f1 f2]]
                   (< key-comparison 0) [r1 s2 [k1 :left-only f1 nil]]
                   (> key-comparison 0) [s1 r2 [k2 :right-only nil f2]])]
         (when (or k1 k2)
@@ -80,6 +92,7 @@
           (if (filter? c)
             (cons c (reg-compare n1 n2 filter? progress-reporter))
             (reg-compare n1 n2 filter? progress-reporter)))))))
+
 #_
 (->>
   (reg-compare (reg-seq hklm-software)
@@ -93,6 +106,8 @@
 (defn open-subkey [rkey subkeys]
   (reduce #(.OpenSubKey % %2) rkey subkeys))
 
+(def ignore-kind #{RegistryValueKind/Binary})
+
 (defn -main[& args]
   (let [[machine hive-name subkey-csv] args
         hive (enum-val RegistryHive hive-name)
@@ -102,14 +117,27 @@
         differences
         (reg-compare (reg-seq (open-subkey local-key subkeys))
                      (reg-seq (open-subkey remote-key subkeys))
-                     (fn compare-filter [[path difference]]
-                       (and (reg-key? path)
-                            (not= :same difference)))
+                     (fn compare-filter [[path difference l r]]
+                       (and (not (reg-key? path))
+                            (not= :same difference)
+                            (not (or (ignore-kind (:kind l))
+                                     (ignore-kind (:kind r))))))
                      (make-title-reporter 100))]
     (stderr! "Comparing" hive "hive on this computer to" machine "under" subkey-csv)
     (println "[")
     (doseq [diff differences]
-      (println diff))
+      (let [fmt (fn fmt[r]
+                  (cond (reg-key? r)      (.get_Name r)
+                        (associative? r)  (-> r
+                                              (dissoc :key)
+                                              (update :value #(if (array? %)
+                                                                (clojure.string/join "\n" %)
+                                                                %)))
+                        :else             r))
+            d (-> diff
+                  (update-in [2] fmt)
+                  (update-in [3] fmt))]
+        (prn d)))
     (println "]"))
   (stderr! "Done!"))
-;(-main "SSI-TRVL-ENG01" "LocalMachine" "Software,7-Zip")
+;(-main "pan-thing1" "LocalMachine" "Software,Softek")
