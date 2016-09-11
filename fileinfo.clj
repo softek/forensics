@@ -42,7 +42,7 @@ deps.exe scpview.exe|FileInfo --sha1 --sha1-dice --append-folder
   (-> (BitConverter/ToString bytes)
       (.Replace "-" "")))
 (defn bytes->dice-words [bytes]
-  (diceware/bytes->words-string diceware/dice-map (byte-array (take 4 bytes))))
+  (diceware/bytes->words-string @diceware/dice-map (byte-array (take 4 bytes))))
 
 (def bytes->string (atom hexadecimal))
 

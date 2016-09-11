@@ -7,7 +7,7 @@
 
 (def rolls-per-word 5)
 
-(defn dice-map [lines]
+(defn lines->dice-map [lines]
   (->> lines
        (mapcat #(re-seq #"^([1-6]{5})\s+(\S+)" %))
        (mapcat (partial drop 1))
@@ -59,16 +59,15 @@
   ([] (read-dice-map "diceware.wordlist.asc"))
   ([file-name]
    (-> (StreamReader. file-name)
-       (line-seq)
-       dice-map))) 
+       line-seq
+       lines->dice-map))) 
 
-(def dice-map (read-dice-map))
+(def dice-map (delay (read-dice-map)))
 
 (defn -main [& args]
-  (let [words (if (empty? args) ["11111" "22222" "33333"] args)
-        dice-map dice-map]
+  (let [words (if (empty? args) ["11111" "22222" "33333"] args)]
     (->> words
          (mapcat (fn [dice]
-                   (dice-map dice (str "not found in dice-map: " dice))))
+                   (@dice-map dice (str "not found in dice-map: " dice))))
          (apply str)
          println)))
