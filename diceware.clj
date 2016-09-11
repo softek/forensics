@@ -39,11 +39,6 @@
        read-string
        base-dice))
 
-(defn title-case [word]
-  (let [[w ord](split-at 1 word)
-        W (string/upper-case (apply str w))]
-    (apply str W ord)))
-
 (defn bytes->words-string [dice-map bytes]
   (->> bytes
        bytes->dice
@@ -52,7 +47,7 @@
        (partition rolls-per-word)
        (filter #(= rolls-per-word (count %)))
        (map #(dice-map (apply str %)))
-       (map title-case)
+       (map string/capitalize)
        (apply str)))
 
 (defn read-dice-map
