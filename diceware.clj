@@ -2,7 +2,10 @@
   (:require [clojure.string :as string])
   (:import
     [System.IO
-      StreamReader])
+      Path
+      StreamReader]
+    [System.Reflection
+      Assembly])
   (:gen-class))
 
 (def rolls-per-word 5)
@@ -50,12 +53,18 @@
        (map string/capitalize)
        (apply str)))
 
+(defn path-relative-to-assembly [file-name]
+  (let [assembly-location (->> (System.Reflection.Assembly/GetExecutingAssembly)
+                               (.-Location)
+                               (Path/GetDirectoryName))]
+    (Path/Combine assembly-location file-name)))
+
 (defn read-dice-map
-  ([] (read-dice-map "diceware.wordlist.asc"))
+  ([] (read-dice-map (path-relative-to-assembly "diceware.wordlist.asc")))
   ([file-name]
    (-> (StreamReader. file-name)
        line-seq
-       lines->dice-map))) 
+       lines->dice-map)))
 
 (def dice-map (delay (read-dice-map)))
 
