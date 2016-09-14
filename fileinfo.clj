@@ -20,6 +20,16 @@
 FileInfo.exe reads a list of files from STDIN and shows information
 like a SHA1 hash or the first directory in %PATH% that contains the file.
 
+The current directory
+
+Options:
+  --sha1                  Adds a column for the SHA1 hash
+  --md5                   Adds a column for the MD5 hash
+  --sha1-dice             Creates a memorable name with SHA1
+  --md5-dice              Creates a memorable name with MD5
+  --folder                Adds a column for the folder
+  --ignore-system-path    Only searches the current directory
+                             
 # Example 1
 To show the sha1 of all the files in the current directory
 
@@ -28,12 +38,12 @@ dir /b|FileInfo --sha1
 # Example 2
 To show the first directory in %PATH% that contains the file.
 
-echo scpview.exe|FileInfo --path --append-folder
+echo scpview.exe|FileInfo --folder
 
 # Example 3
 To show the hash and location of scpview's dependencies
 
-deps.exe scpview.exe|FileInfo --sha1 --sha1-dice --append-folder
+deps.exe scpview.exe|FileInfo --sha1 --sha1-dice --folder
 "))
 
 (defn base64 [bytes]
@@ -106,7 +116,7 @@ deps.exe scpview.exe|FileInfo --sha1 --sha1-dice --append-folder
         MD5? (contains-arg? #{"--md5"})
         SHA1-dice? (contains-arg? #{"--sha1-dice"})
         MD5-dice? (contains-arg? #{"--md5-dice"})
-        folder? (contains-arg? #{"--append-folder"})
+        folder? (contains-arg? #{"--folder"})
         fns [(fn output-file-name [[file-name full-paths]]
                 file-name)]]
     (cond-> fns
@@ -156,7 +166,7 @@ deps.exe scpview.exe|FileInfo --sha1 --sha1-dice --append-folder
          (map println)
          doall)))
 
-; (read-filenames-from-input-and-print-output ["scpview.exe"] ["--SHA1" "--append-folder"])
+; (read-filenames-from-input-and-print-output ["scpview.exe"] ["--SHA1" "--folder"])
 
 (defn -main[& args]
   (if (some #{"/?" "-?" "--help"} args)
