@@ -10,11 +10,12 @@ echo.>>"%status%"
 call :Identify
 call :MQ
 call :Zip
+
 goto :EOF
 
 :Identify
   if exist "%binset%" del "%binset%"
-  dir /b apptest.exe authview.exe crmtest.exe ddirdump.exe ejstest.exe enumlog.exe getlog.exe mon_ss.exe mqss_audit.exe msgview.exe qcpview.exe quemon.exe qxcr.exe setlog.exe srvconfig.exe srvmon.exe sysmon.exe tdbview.exe testdns.exe testsec.exe >> "%binset%"
+  dir /b apptest.exe authview.exe crmtest.exe ddirdump.exe ejstest.exe enumlog.exe getlog.exe mon_ss.exe mqss_audit.exe msgview.exe qcpview.exe quemon.exe qxcr.exe setlog.exe srvconfig.exe srvmon.exe sysmon.exe tdbview.exe testdns.exe testsec.exe >> "%binset%" 2> nul
   deps.exe scpview.exe >> "%binset%" 
   type "%binset%"|find /i /v "logical.dll"|FileInfo --sha1 --ignore-system-path|codename.exe>>"%status%"
   ECHO.>>"%status%"
@@ -44,6 +45,10 @@ goto :EOF
   if exist "%archive%" del "%archive%"
   type "%archiveset%"|FileInfo --ignore-system-path>"%archiveset%2"
   7z a "%archive%" @"%archiveset%2"
+
+  if exist "%binset%" del "%binset%"
+  if exist "%archiveset%" del "%archiveset%"
+  if exist "%archiveset%2" del "%archiveset%2"
   goto :EOF
 
 :SetArchive
