@@ -20,32 +20,38 @@
 codename.exe reads from STDIN a list of lines and generates
 a pseudo-version with a (hopefully) pronouncable name.
 
-Note: Line endings and capitalization are normalized.
+The codename is based on the set of lines, independent of 
+line endings, capitalization, and leading and trailing whitespace.
 
 # Example 1
 Generate a name for the set of *.exe *.dll files in the current directory
 
-dir /on /b *.exe *.dll|codename.exe
+dir /b *.exe *.dll|codename.exe
 
 # Example 2
 Generate a name for the scpview.exe and its dependencies.
 
-deps.exe scpview.exe|FileInfo --sha1|codename.exe
+deps.exe program.exe|FileInfo --sha1|codename.exe
 "))
 
 (defn- stderr! [& args]
   (binding [*out* *err*]
     (apply println args)))
 
-(defn get-hash-content-version-0
+(defn get-hash-content-lines-version-0
   "Gets a string containing the sorted, normalized,
    lines.  Each line is normalized by trimming and case-converting to lower.
-   Each line is followed by \\n."
+   Each line is followed by \\r\\n."
   [lines]
   (->> lines
        (filter (complement string/blank?))
        (map (comp string/lower-case string/trim))
-       sort
+       sort))
+
+(defn join-hash-content-lines
+  "Each line is followed by \\r\\n."
+  [lines]
+  (->> lines
        (#(mapcat vector % (repeat "\r\n")))
        (string/join)))
 
@@ -63,14 +69,15 @@ deps.exe scpview.exe|FileInfo --sha1|codename.exe
     (.ComputeHash hasher stream)))
 
 (defn run [lines]
-  (let [content (get-hash-content-version-0 lines)
+  (let [content-lines (get-hash-content-lines-version-0 lines)
+        content (join-hash-content-lines content-lines)
         bytes (calculate-hash-bytes content)
         words (fileinfo/bytes->dice-words bytes)
         hex (fileinfo/hexadecimal bytes)]
     (println (str "codename:\t" algorithm-version "_" words))
     (println (str "sha1:    \t" hex))
     (println)
-    (println "-----Begin Content-----")
+    (println "-----Begin" (count content-lines) "Lines of Content-----")
     (print content)
     (println "-----End Content-----")
     (println)
