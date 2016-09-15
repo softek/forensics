@@ -161,9 +161,8 @@ deps.exe scpview.exe|FileInfo --sha1 --sha1-dice --folder
                       (comment-char? (first %))))
          (map #(let [file-name (string/lower-case %)]
                   (if-let [grp (all-files-by-fn (string/lower-case %))]
-                    (string/join "," (output-fn [file-name grp]))
-                    (str file-name " Not found"))))
-         (map println)
+                    (println (string/join "," (output-fn [file-name grp])))
+                    (stderr! (str file-name " Not found")))))
          doall)))
 
 ; (read-filenames-from-input-and-print-output ["scpview.exe"] ["--SHA1" "--folder"])
