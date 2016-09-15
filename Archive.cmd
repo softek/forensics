@@ -40,7 +40,7 @@ goto :EOF
   if errorlevel 1 echo Can't find 7-zip
   type "%binset%">"%archiveset%"
   dir /b "%Status%">>"%archiveset%"
-  call :SetArchive %cd%
+  call :SetArchive "%cd%"
   if exist "%archive%" del "%archive%"
   type "%archiveset%"|FileInfo --ignore-system-path>"%archiveset%2"
   7z a "%archive%" @"%archiveset%2"
