@@ -9,6 +9,7 @@ echo.>>"%status%"
 
 call :Identify
 call :MQ
+call :Path
 call :Zip
 
 goto :EOF
@@ -50,6 +51,15 @@ goto :EOF
   if exist "%archiveset%" del "%archiveset%"
   if exist "%archiveset%2" del "%archiveset%2"
   goto :EOF
+
+:Path
+  ECHO======================= System Path (sorted) ===================================>>"%status%"
+  ECHO.>>"%status%"
+  call pathparts.cmd | sort >>"%status%"
+  ECHO======================= System Path (unsorted) =================================>>"%status%"
+  ECHO.>>"%status%"
+  call pathparts.cmd >>"%status%"
+  ECHO================================================================================>>"%status%"
 
 :SetArchive
   SET Archive=%computername%.%Date:~10,4%-%Date:~4,2%-%Date:~7,2%.%~n1.7z

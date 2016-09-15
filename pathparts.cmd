@@ -1,0 +1,1 @@
+@powershell.exe pathparts.ps1
