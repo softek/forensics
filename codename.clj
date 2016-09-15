@@ -46,7 +46,7 @@ deps.exe scpview.exe|FileInfo --sha1|codename.exe
        (filter (complement string/blank?))
        (map (comp string/lower-case string/trim))
        sort
-       (#(mapcat vector % (repeat "\n")))
+       (#(mapcat vector % (repeat "\r\n")))
        (string/join)))
 
 (defn string->stream [s]
