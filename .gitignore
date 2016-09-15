@@ -1,0 +1,9 @@
+*.exe
+*.dll
+*.pdb
+*.zip
+.package.txt
+.archive.txt
+.status.txt
+.binset.txt
+.archiveset.txt
