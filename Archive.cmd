@@ -11,12 +11,13 @@ echo Forensics Archive %date% %time%>%status%
 echo.>>"%status%"
 
 call :Identify
-call :MQ
 call :Path
+call :Millennium
+call :MQ
 call :Registry
-call :Zip
 call :AllBin
 
+call :Zip
 goto :EOF
 
 :Identify
@@ -30,14 +31,25 @@ goto :EOF
   goto :EOF
 
 :AllBin
-  ECHO======================= %CD% DLL EXE files ===================================>>"%status%"
+  ECHO======================= %CD% DLL EXE files =================================>>"%status%"
   dir /b *.dll *.exe|FileInfo --sha1 --ignore-system-path>>"%status%"
-  ECHO================================================================================>>"%status%"
+  ECHO============================================================================>>"%status%"
+  goto :EOF
+
+:Millennium
+  ECHO.>>"%status%"
+  ECHO============================= GetMillenniumVersion =========================>>"%status%"
+  where GetMillenniumVersion.exe >nul 2>nul
+  if errorlevel 1        ECHO Can't find GetMillenniumVersion.exe>>"%status%"
+  if not errorlevel 1    GetMillenniumVersion.exe>>"%status%"
+  ECHO.>>"%status%"
+  ECHO============================================================================>>"%status%"
+  ECHO.>>"%status%"
   goto :EOF
 
 :MQ
   ECHO.>>"%status%"
-  ECHO============================================================================>>"%status%"
+  ECHO================================ dspmqver ==================================>>"%status%"
   where dspmqver.exe >nul 2>nul
   if errorlevel 1        ECHO Can't find dspmqver.exe>>"%status%"
   if not errorlevel 1    dspmqver.exe -p 1 >>"%status%"
@@ -76,13 +88,13 @@ goto :EOF
   goto :EOF
 
 :Path
-  ECHO======================= System Path (sorted) ===================================>>"%status%"
+  ECHO======================= System Path (sorted) ===============================>>"%status%"
   ECHO.>>"%status%"
   call pathparts.cmd | sort >>"%status%"
-  ECHO======================= System Path (unsorted) =================================>>"%status%"
+  ECHO======================= System Path (unsorted) =============================>>"%status%"
   ECHO.>>"%status%"
   call pathparts.cmd >>"%status%"
-  ECHO================================================================================>>"%status%"
+  ECHO============================================================================>>"%status%"
   goto :EOF
 
 :SetArchive
