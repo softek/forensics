@@ -14,7 +14,7 @@ ECHO.>>%status%
 call build.all.cmd
 dir /b *dll *.exe |fileinfo --sha1 --ignore-system-path >>%status%
 if exist Forensics.zip del Forensics.zip
-zip -9 Forensics.zip * -x *.zip .gitignore .*set.txt
+zip -9 Forensics.zip * -x *.zip *.7z .gitignore .*set.txt
 ECHO ============================== Packaging Complete ============================
 type %status%
 dir Forensics.zip
