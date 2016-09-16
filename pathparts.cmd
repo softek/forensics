@@ -1,2 +1,2 @@
 @echo off
-powershell.exe "%~dp0pathparts.ps1"
+powershell -Command ($env:Path).Replace(';',\"`r`n\")
