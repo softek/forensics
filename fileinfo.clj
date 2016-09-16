@@ -29,7 +29,7 @@ Options:
   --md5-dice              Creates a memorable name with MD5
   --folder                Adds a column for the folder
   --ignore-system-path    Only searches the current directory
-                             
+
 # Example 1
 To show the sha1 of all the files in the current directory
 
@@ -50,7 +50,8 @@ deps.exe scpview.exe|FileInfo --sha1 --sha1-dice --folder
   (Convert/ToBase64String bytes))
 (defn hexadecimal [bytes]
   (-> (BitConverter/ToString bytes)
-      (.Replace "-" "")))
+      (.Replace "-" "")
+      (.ToLower)))
 (defn bytes->dice-words [bytes]
   (diceware/bytes->words-string @diceware/dice-map (byte-array (take 4 bytes))))
 
