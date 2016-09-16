@@ -70,7 +70,7 @@ goto :EOF
 
 :ArchiveVersion
   ECHO======================= ArchiveScript =================================>>"%status%"
-  type "%~dp0.archive.version.txt"|find /i "Forensics Package">>"%status%"
+  type "%~dp0.archive.version.txt"|find /i "Forensics Package"|find /v "[">>"%status%"
   ECHO============================================================================>>"%status%"
   goto :EOF
 
