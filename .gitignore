@@ -4,7 +4,7 @@
 *.zip
 .package.txt
 .archive.txt
-.status.txt
+.archive.version.txt
 .binset.txt
 .archiveset.txt
 expected-binarylist.txt

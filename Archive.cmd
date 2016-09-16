@@ -16,6 +16,7 @@ call :Millennium
 call :MQ
 call :Registry
 call :AllBin
+call :ArchiveVersion
 
 call :Zip
 goto :EOF
@@ -67,18 +68,30 @@ goto :EOF
   ECHO.>>"%status%"
   goto :EOF
 
+:ArchiveVersion
+  ECHO======================= ArchiveScript =================================>>"%status%"
+  type "%~dp0.archive.version.txt"|find /i "Forensics Package">>"%status%"
+  ECHO============================================================================>>"%status%"
+  goto :EOF
+
 :Zip
   where 7z.exe >nul 2>nul
   if errorlevel 1 set path=%path%;c:\Program Files\7-Zip;c:\Program Files (x86)\7-Zip
   where 7z.exe >nul 2>nul
   if errorlevel 1 echo Can't find 7-zip
+
+  :: Create a set of files that may or may not exist in the current directory
   type "%binset%">"%archiveset%"
   dir /b "%Status%">>"%archiveset%"
+
+  :: Create a set of files that do exist, and add explicit paths
   type "%%~dp0\expected-binarylist.txt"|FileInfo --ignore-system-path>>"%archiveset%"
+  type "%archiveset%"|FileInfo --ignore-system-path>"%archiveset%2"
+  echo %~dp0.archive.version.txt>>"%archiveset%2"
+  echo %RegPath%>>"%archiveset%2"
+
   call :SetArchive "%cd%"
   if exist "%archive%" del "%archive%"
-  type "%archiveset%"|FileInfo --ignore-system-path>"%archiveset%2"
-  echo %RegPath%>>"%archiveset%2"
   7z.exe a "%archive%" @"%archiveset%2"
 
   if exist "%binset%" del "%binset%"

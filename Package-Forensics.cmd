@@ -1,11 +1,11 @@
 @ECHO OFF
 SETLOCAL
 git pull
-set Status=.status.txt
-ECHO Forensics Package %date% %time%>%status%
-ECHO.>>%status%
-git describe --long --tags --dirty >>%status%
-git rev-parse --abbrev-ref HEAD >>%status%
+for /f "usebackq" %%x in (`git rev-parse --abbrev-ref HEAD`) do set GIT_BRANCH=%%x
+for /f "usebackq" %%x in (`git describe --long --tags --dirty`) do set GIT_DESCRIPTION=%%x
+
+set Status=.archive.version.txt
+ECHO Forensics Package %GIT_BRANCH% %GIT_DESCRIPTION% %date% %time%>%status%
 ECHO.>>%status%
 ECHO Recent Changes:>>%status%
 git log "--pretty=format:%%h %%ad %%s%%d [%%an]%%x0D" --graph --date=short -n 10 >>%status%
