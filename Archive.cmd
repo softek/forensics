@@ -15,6 +15,7 @@ call :MQ
 call :Path
 call :Registry
 call :Zip
+call :AllBin
 
 goto :EOF
 
@@ -26,6 +27,12 @@ goto :EOF
   ECHO.>>"%status%"
   ECHO Archive Script Version: %ArchiveVersion%>>"%status%"
   ECHO.>>"%status%"
+  goto :EOF
+
+:AllBin
+  ECHO======================= %CD% DLL EXE files ===================================>>"%status%"
+  dir /b *.dll *.exe|FileInfo --sha1 --ignore-system-path>>"%status%"
+  ECHO================================================================================>>"%status%"
   goto :EOF
 
 :MQ
