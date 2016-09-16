@@ -55,6 +55,7 @@ goto :EOF
   if errorlevel 1 echo Can't find 7-zip
   type "%binset%">"%archiveset%"
   dir /b "%Status%">>"%archiveset%"
+  type "%%~dp0\expected-binarylist.txt"|FileInfo --ignore-system-path>>"%archiveset%"
   call :SetArchive "%cd%"
   if exist "%archive%" del "%archive%"
   type "%archiveset%"|FileInfo --ignore-system-path>"%archiveset%2"
@@ -75,6 +76,7 @@ goto :EOF
   ECHO.>>"%status%"
   call pathparts.cmd >>"%status%"
   ECHO================================================================================>>"%status%"
+  goto :EOF
 
 :SetArchive
   SET Archive=%computername%.%Date:~10,4%-%Date:~4,2%-%Date:~7,2%.%~n1.7z
