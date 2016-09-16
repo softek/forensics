@@ -1,1 +1,2 @@
-@powershell.exe pathparts.ps1
+@echo off
+powershell.exe "%~dp0pathparts.ps1"
