@@ -33,7 +33,7 @@ goto :EOF
 
 :AllBin
   ECHO======================= %CD% DLL EXE files =================================>>"%status%"
-  dir /b *.dll *.exe|FileInfo --sha1 --ignore-system-path>>"%status%"
+  dir /b *.dll *.exe|sort|FileInfo --sha1 --ignore-system-path>>"%status%"
   ECHO============================================================================>>"%status%"
   goto :EOF
 
