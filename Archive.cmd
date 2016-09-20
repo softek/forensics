@@ -111,6 +111,6 @@ goto :EOF
   goto :EOF
 
 :SetArchive
-  SET Archive=%computername%.%Date:~10,4%-%Date:~4,2%-%Date:~7,2%.%~n1.7z
+  SET Archive=%computername%-%Date:~10,4%-%Date:~4,2%-%Date:~7,2%-%~nx1.7z
   ECHO ARCHIVE: %archive%
   goto :EOF
