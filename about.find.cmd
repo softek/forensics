@@ -1,17 +1,32 @@
 @ECHO OFF
 setlocal
 
-set about=%~dp0\about.cmd
+:: Interpret arguments
+IF "%~1"=="/?"     GOTO :Usage
+IF "%~1"=="-?"     GOTO :Usage
+IF "%~1"=="--help" GOTO :Usage
 
-:: Usage:
-:: about_find <FileFilter> "substring"
-:: about_find *Cook*2016*.7z "Version"
-
-IF "x"=="x%~1" set filter=*.7z
+IF "x"=="x%~1"     set filter=*.7z
 IF NOT "x"=="x%~1" set filter=%~1
 
+
+set about=%~dp0\about.cmd
+
+:: Operate on matched files
 for %%f in (%filter%) DO call :DoFindOrType "%%f" "%~2"
 goto :EOF
+
+
+:Usage
+  ECHO Usage:
+  ECHO   about.find.cmd [FileFilter [substring]]
+  ECHO.
+  ECHO Examples:
+  ECHO   about.find.cmd                    -shows .about.txt file for all archives
+  ECHO   about.find.cmd ""  "codename:"    -find matching substrings in all archives
+  ECHO   about.find.cmd *Cook*.7z                 -shows .about.txt file for matching archives
+  ECHO   about.find.cmd *2016*.7z  "Cumulative:"  -find lines with "Cumulative:"
+  GOTO :EOF
 
 :DoFindOrType
   ECHO ------- %~1

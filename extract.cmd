@@ -2,7 +2,11 @@
 setlocal
 
 :: Interpret arguments
-if "x%~1"=="x" GOTO :Usage
+IF "%~1"=="/?"     GOTO :Usage
+IF "%~1"=="-?"     GOTO :Usage
+IF "%~1"=="--help" GOTO :Usage
+if "x%~1"=="x"     GOTO :Usage
+
 set archive=%~1
 
 :: Check archive
@@ -13,11 +17,12 @@ call :Zip "%archive%"
 
 goto :EOF
 
+
 :Usage
   ECHO Extracts specified archive to a subdirectory of the current directory.
   ECHO.
   ECHO Usage:
-  ECHO Extract.cmd your-archive.7z
+  ECHO   Extract.cmd your-archive.7z
   goto :EOF
 
 :Zip
