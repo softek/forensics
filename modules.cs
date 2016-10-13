@@ -67,15 +67,8 @@ PIDs may be decimal or hexadecimal.  Hex PIDs must begin with `0x` or `&h`.
         var cd = Environment.CurrentDirectory.Normalized() + "\\";
         foreach (var p in x)
         {
-            Console.Error.WriteLine("     raw         " + p);
-            Console.Error.WriteLine("     normal      " + p.Normalized());
             var pretty = p.StartsWith(cd) ? p.Substring(cd.Length) : p;
             Console.WriteLine(pretty);
         }
-    }
-
-    static string Normalized(this string s)
-    {
-        return s == null ? "" : s.ToLower();
     }
 }
